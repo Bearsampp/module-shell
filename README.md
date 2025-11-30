@@ -10,11 +10,48 @@ This is a module of [Bearsampp project](https://github.com/bearsampp/bearsampp) 
 ## Overview
 
 This module provides PowerShell 7+ with enhanced console features including:
-- **Clink** - Powerful command-line completion and editing
-- **Clink-completions** - Extended completion scripts for common commands
 - **Oh My Posh** - Beautiful and customizable prompt themes
+- **PSReadLine** - Advanced command-line editing and history
+- **Nerd Fonts** - Rich icon and glyph support
 
 This module provides automated building and packaging for Bearsampp.
+
+### Font Requirement
+
+This PowerShell module requires a **Nerd Font** to display Oh My Posh icons and glyphs correctly.
+
+#### Required Font
+- **Font Name**: CaskaydiaCove NF (Cascadia Code Nerd Font)
+- **Installation**: Should be installed system-wide via Bearsampp prerequisites
+
+#### Configuring the Font
+
+**Windows Terminal (Recommended)**
+
+If using Windows Terminal, add this to your `settings.json`:
+
+```json
+{
+    "profiles": {
+        "defaults": {
+            "font": {
+                "face": "CaskaydiaCove NF",
+                "size": 10
+            }
+        }
+    }
+}
+```
+
+**Windows Console Host (conhost.exe)**
+1. Right-click the title bar → Properties
+2. Go to the Font tab
+3. Select "CaskaydiaCove NF" from the font list
+4. Click OK
+
+**PowerShell Console**
+
+The font is automatically used if it's set as the default console font in Windows.
 
 ### Build System
 
@@ -110,8 +147,6 @@ bundle.format   = 7z              # Archive format (7z or zip)
 Dependencies configuration for each version (located in `bin/shell{version}/deps.properties`):
 
 ```properties
-clink = https://github.com/Bearsampp/modules-untouched/releases/download/Cmder-2025.11.25/clink.1.9.2.6aa2e0.zip
-clink_completions = https://github.com/Bearsampp/modules-untouched/releases/download/Cmder-2025.11.25/clink-completions-0.6.7.zip
 oh_my_posh = https://github.com/Bearsampp/modules-untouched/releases/download/Cmder-2025.11.25/posh-windows-amd64.exe
 oh_my_posh_theme = https://github.com/JanDeDobbeleer/oh-my-posh/blob/main/themes/paradox.omp.json
 ```
@@ -193,10 +228,44 @@ C:/Bearsampp-build/
 
 ### Enhanced Console Features
 
-- **Clink Integration**: Powerful bash-style command-line editing
-- **Auto-completion**: Intelligent command and path completion
 - **Oh My Posh Themes**: Beautiful, customizable prompt themes
+- **PSReadLine**: Advanced command-line editing with syntax highlighting
+- **Auto-completion**: Intelligent command and path completion
 - **Command History**: Persistent command history across sessions
+- **Nerd Font Icons**: Rich visual indicators and glyphs
+
+### Configuration Files
+
+- **Microsoft.PowerShell_profile.ps1** - Main PowerShell profile
+  - Configures PSReadLine (command-line editing)
+  - Initializes Oh My Posh with paradox theme
+  - Sets up history and key bindings
+  - Requires CaskaydiaCove NF font for proper icon display
+
+### Environment Variables
+
+The profile sets these environment variables:
+- `POSH_ROOT` - Path to Oh My Posh installation
+- `POSH_THEMES_PATH` - Path to Oh My Posh themes directory
+
+### Customization
+
+**Change Oh My Posh Theme**
+
+Edit the profile and change the theme file:
+```powershell
+$ohMyPoshTheme = Join-Path $env:POSH_ROOT "themes\YOUR_THEME.omp.json"
+```
+
+Available themes are in `vendor/oh-my-posh/themes/`
+
+**Modify PSReadLine Settings**
+
+Edit the `Set-PSReadLineOption` calls in the profile to customize:
+- Colors
+- Key bindings
+- History behavior
+- Prediction settings
 
 ### Build Features
 
@@ -224,13 +293,3 @@ This project deliberately does not ship the Gradle Wrapper. Install Gradle 8+ lo
 ## Issues
 
 Issues must be reported on [Bearsampp repository](https://github.com/bearsampp/bearsampp/issues).
-
-## Sponsors
-
-We would like to thank our sponsors to the project:
-
-[N6REJ](https://github.com/N6REJ)<br />
-
-<img src="https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.png" width="80">
-
-[![Code Shelter](https://www.codeshelter.co/static/badges/badge-flat.svg)](https://www.codeshelter.co/)
