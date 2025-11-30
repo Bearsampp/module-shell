@@ -87,8 +87,8 @@ def getAvailableVersions() {
     def binDir = file("${projectDir}/bin")
     if (binDir.exists()) {
         def binVersions = binDir.listFiles()
-            ?.findAll { it.isDirectory() && it.name.startsWith(bundleName) && it.name != 'archived' }
-            ?.collect { it.name.replace(bundleName, '') } ?: []
+                ?.findAll { it.isDirectory() && it.name.startsWith("${bundleName}-") && it.name != 'archived' }
+            ?.collect { it.name.replace("${bundleName}-", '') } ?: []
         versions.addAll(binVersions)
     }
     
@@ -96,8 +96,8 @@ def getAvailableVersions() {
     def archivedDir = file("${projectDir}/bin/archived")
     if (archivedDir.exists()) {
         def archivedVersions = archivedDir.listFiles()
-            ?.findAll { it.isDirectory() && it.name.startsWith(bundleName) }
-            ?.collect { it.name.replace(bundleName, '') } ?: []
+            ?.findAll { it.isDirectory() && it.name.startsWith("${bundleName}-") }
+            ?.collect { it.name.replace("${bundleName}-", '') } ?: []
         versions.addAll(archivedVersions)
     }
     
@@ -264,10 +264,10 @@ def fetchModulesUntouchedProperties() {
         }
         def props = new Properties()
         tempFile.withInputStream { props.load(it) }
-        println "  ✓ Successfully loaded ${props.size()} versions from modules-untouched"
+        println "  Successfully loaded ${props.size()} versions from modules-untouched"
         return props
     } catch (Exception e) {
-        println "  ✗ Warning: Could not fetch ${bundleName}.properties from modules-untouched: ${e.message}"
+        println "  Warning: Could not fetch ${bundleName}.properties from modules-untouched: ${e.message}"
         return null
     }
 }
@@ -471,9 +471,9 @@ tasks.register('release') {
             
             versions.eachWithIndex { version, index ->
                 def location = ""
-                if (binDir.exists() && file("${binDir}/${bundleName}${version}").exists()) {
+                if (binDir.exists() && file("${binDir}/${bundleName}-${version}").exists()) {
                     location = "[bin]"
-                } else if (archivedDir.exists() && file("${archivedDir}/${bundleName}${version}").exists()) {
+                } else if (archivedDir.exists() && file("${archivedDir}/${bundleName}-${version}").exists()) {
                     location = "[bin/archived]"
                 }
                 println "  ${(index + 1).toString().padLeft(2)}. ${version.padRight(20)} ${location}"
@@ -532,10 +532,10 @@ tasks.register('release') {
         println ""
         
         // Check both bin/ and bin/archived/ directories
-        def bundlePath = file("${projectDir}/bin/${bundleName}${versionToBuild}")
+        def bundlePath = file("${projectDir}/bin/${bundleName}-${versionToBuild}")
         
         if (!bundlePath.exists()) {
-            bundlePath = file("${projectDir}/bin/archived/${bundleName}${versionToBuild}")
+            bundlePath = file("${projectDir}/bin/archived/${bundleName}-${versionToBuild}")
         }
         
         if (!bundlePath.exists()) {
@@ -545,7 +545,7 @@ tasks.register('release') {
             }.join('\n') ?: "  (none found)"
             
             throw new GradleException("""
-                Bundle version not found: ${bundleName}${versionToBuild}
+                Bundle version not found: ${bundleName}-${versionToBuild}
                 
                 Available versions:
                 ${availableVersionsList}
@@ -557,38 +557,41 @@ tasks.register('release') {
         
         // Get the bundle folder and version
         def bundleFolder = bundlePath.name
-        def bundleVersion = bundleFolder.replace(bundleName, '')
+        def bundleVersion = bundleFolder.replace("${bundleName}-", '')
 
-        // Determine source location for ConsoleZ files
-        def bundleSrcFinal = bundlePath
-        def consoleExe = file("${bundleSrcFinal}/Console.exe")
-        if (!consoleExe.exists()) {
-            // Try cached extraction in bearsampp-build/tmp
+        // Determine source paths
+        def bundleSrcDest = bundlePath
+        def bundleSrcFinal = bundleSrcDest
+
+        // PowerShell binaries are never in bin/ - always download from modules-untouched
+        println ""
+        println "Downloading PowerShell ${bundleVersion}..."
+        println ""
+
+        try {
+            // Always download fresh from modules-untouched (no cache)
             def tmpExtractPath = file("${bundleTmpExtractPath}/${bundleVersion}")
-            def tmpConsoleDir = findConsolezDirectory(tmpExtractPath)
-            if (tmpConsoleDir && tmpConsoleDir.exists()) {
-                println "Using cached ConsoleZ binaries from bearsampp-build/tmp"
-                bundleSrcFinal = tmpConsoleDir
-            } else {
-                // Download from modules-untouched (primary) with fallbacks
-                println ""
-                println "ConsoleZ binaries not found in bin/. Downloading ConsoleZ ${bundleVersion}..."
-                println ""
-                bundleSrcFinal = downloadFromModulesUntouched(bundleName, bundleVersion)
+            if (tmpExtractPath.exists()) {
+                delete tmpExtractPath
             }
+            
+            bundleSrcFinal = downloadFromModulesUntouched(bundleName, bundleVersion)
+        } catch (Exception e) {
+            throw new GradleException("""
+                Failed to download PowerShell binaries: ${e.message}
+
+                Check that version ${bundleVersion} exists in modules-untouched shell.properties
+            """.stripIndent())
         }
 
-        // Verify Console.exe exists in final source
-        consoleExe = file("${bundleSrcFinal}/Console.exe")
-        if (!consoleExe.exists()) {
-            throw new GradleException("Console.exe not found at ${consoleExe}")
+        // Verify pwsh.exe exists
+        def pwshExe = file("${bundleSrcFinal}/pwsh.exe")
+        if (!pwshExe.exists()) {
+            throw new GradleException("pwsh.exe not found at ${pwshExe}")
         }
 
         println "Source folder: ${bundleSrcFinal}"
         println ""
-        
-        // Copy files from source and overlay bundle files (bin overrides)
-        println "Copying ConsoleZ files..."
         
         // Process dependencies if deps.properties exists
         def depsFile = file("${bundlePath}/deps.properties")
@@ -686,7 +689,7 @@ tasks.register('release') {
                 
                 // Determine filename from URL
                 def filename = ohMyPoshUrl.substring(ohMyPoshUrl.lastIndexOf('/') + 1)
-                def destFile = file("${ohMyPoshPath}/${filename}")
+                def finalDestFile = file("${ohMyPoshPath}/oh-my-posh.exe")
                 
                 // Download if not already cached
                 def downloadsDir = file(bundleTmpDownloadPath)
@@ -699,16 +702,17 @@ tasks.register('release') {
                     println "  Using cached file: ${cachedFile.name}"
                 }
                 
-                // Copy to destination
+                // Copy to destination and rename to oh-my-posh.exe
                 copy {
                     from cachedFile
                     into ohMyPoshPath
+                    rename { 'oh-my-posh.exe' }
                 }
                 
-                if (!destFile.exists()) {
-                    throw new GradleException("${filename} not found after download")
+                if (!finalDestFile.exists()) {
+                    throw new GradleException("oh-my-posh.exe not found after download")
                 }
-                println "Verified: ${filename}"
+                println "Verified: oh-my-posh.exe"
             }
             
             // Oh My Posh Theme
