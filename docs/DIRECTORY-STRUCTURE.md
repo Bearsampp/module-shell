@@ -29,9 +29,6 @@ module-shell/
 ├── img/                          # Images and assets
 │   └── Bearsampp-logo.svg
 │
-├── gradle/                       # Gradle wrapper files
-│   └── wrapper/
-│
 ├── build.gradle                  # Main Gradle build script
 ├── build.properties              # Bundle configuration
 ├── gradle.properties             # Gradle runtime configuration
