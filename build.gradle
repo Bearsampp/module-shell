@@ -757,15 +757,16 @@ tasks.register('release') {
         // Copy to bundles_build directory (non-zip dev artifact)
         println ""
         println "Copying to bundles_build directory..."
-        if (bundleTmpBuildPath.exists()) {
-            delete bundleTmpBuildPath
+        def powershellBuildPath = file("${bundleTmpBuildPath}/${bundleName}${bundleVersion}")
+        if (powershellBuildPath.exists()) {
+            delete powershellBuildPath
         }
-        bundleTmpBuildPath.mkdirs()
+        powershellBuildPath.mkdirs()
         copy {
             from bundleTmpPrepPath
-            into bundleTmpBuildPath
+            into powershellBuildPath
         }
-        println "Non-zip version available at: ${bundleTmpBuildPath}"
+        println "Non-zip version available at: ${powershellBuildPath}"
 
         // Determine build output path following Bearsampp pattern
         // bearsampp-build/{bundleType}/{bundleName}/{bundleRelease}
@@ -1013,7 +1014,7 @@ tasks.named('clean') {
         // Clean temp directories but preserve bundles_build
         if (bundleTmpPath.exists()) {
             println "Cleaning tmp directories (preserving bundles_build)..."
-            
+
             // List of directories to clean (excluding bundles_build)
             def dirsToClean = [
                 file("${buildTmpPath}/bundles_prep"),
@@ -1025,14 +1026,14 @@ tasks.named('clean') {
                 file("${buildTmpPath}/gnuwin32-bin-temp"),
                 file("${buildTmpPath}/gnuwin32-dep-temp")
             ]
-            
+
             dirsToClean.each { dir ->
                 if (dir.exists()) {
                     delete dir
                     println "  Cleaned: ${dir}"
                 }
             }
-            
+
             println "  Preserved: ${buildTmpPath}/bundles_build"
         }
 
