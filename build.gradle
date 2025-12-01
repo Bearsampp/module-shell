@@ -87,8 +87,8 @@ def getAvailableVersions() {
     def binDir = file("${projectDir}/bin")
     if (binDir.exists()) {
         def binVersions = binDir.listFiles()
-                ?.findAll { it.isDirectory() && it.name.startsWith("${bundleName}-") && it.name != 'archived' }
-            ?.collect { it.name.replace("${bundleName}-", '') } ?: []
+                ?.findAll { it.isDirectory() && it.name.startsWith("${bundleName}") && it.name != 'archived' }
+            ?.collect { it.name.replace("${bundleName}", '') } ?: []
         versions.addAll(binVersions)
     }
 
@@ -96,8 +96,8 @@ def getAvailableVersions() {
     def archivedDir = file("${projectDir}/bin/archived")
     if (archivedDir.exists()) {
         def archivedVersions = archivedDir.listFiles()
-            ?.findAll { it.isDirectory() && it.name.startsWith("${bundleName}-") }
-            ?.collect { it.name.replace("${bundleName}-", '') } ?: []
+            ?.findAll { it.isDirectory() && it.name.startsWith("${bundleName}") }
+            ?.collect { it.name.replace("${bundleName}", '') } ?: []
         versions.addAll(archivedVersions)
     }
 
@@ -471,9 +471,9 @@ tasks.register('release') {
 
             versions.eachWithIndex { version, index ->
                 def location = ""
-                if (binDir.exists() && file("${binDir}/${bundleName}-${version}").exists()) {
+                if (binDir.exists() && file("${binDir}/${bundleName}${version}").exists()) {
                     location = "[bin]"
-                } else if (archivedDir.exists() && file("${archivedDir}/${bundleName}-${version}").exists()) {
+                } else if (archivedDir.exists() && file("${archivedDir}/${bundleName}${version}").exists()) {
                     location = "[bin/archived]"
                 }
                 println "  ${(index + 1).toString().padLeft(2)}. ${version.padRight(20)} ${location}"
@@ -532,10 +532,10 @@ tasks.register('release') {
         println ""
 
         // Check both bin/ and bin/archived/ directories
-        def bundlePath = file("${projectDir}/bin/${bundleName}-${versionToBuild}")
+        def bundlePath = file("${projectDir}/bin/${bundleName}${versionToBuild}")
 
         if (!bundlePath.exists()) {
-            bundlePath = file("${projectDir}/bin/archived/${bundleName}-${versionToBuild}")
+            bundlePath = file("${projectDir}/bin/archived/${bundleName}${versionToBuild}")
         }
 
         if (!bundlePath.exists()) {
@@ -545,7 +545,7 @@ tasks.register('release') {
             }.join('\n') ?: "  (none found)"
 
             throw new GradleException("""
-                Bundle version not found: ${bundleName}-${versionToBuild}
+                Bundle version not found: ${bundleName}${versionToBuild}
 
                 Available versions:
                 ${availableVersionsList}
@@ -557,7 +557,7 @@ tasks.register('release') {
 
         // Get the bundle folder and version
         def bundleFolder = bundlePath.name
-        def bundleVersion = bundleFolder.replace("${bundleName}-", '')
+        def bundleVersion = bundleFolder.replace("${bundleName}", '')
 
         // Determine source paths
         def bundleSrcDest = bundlePath
