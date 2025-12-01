@@ -8,6 +8,9 @@ $SHELL_ROOT = Split-Path -Parent $PSScriptRoot
 # Set environment variables for Oh My Posh
 $env:POSH_ROOT = Join-Path $SHELL_ROOT "vendor\oh-my-posh"
 
+# Set PowerShell module path to include bundled modules
+$env:PSModulePath = (Join-Path $SHELL_ROOT "vendor\modules") + ";" + $env:PSModulePath
+
 # Configure console to use Nerd Font (CaskaydiaCove NF)
 # This is required for Oh My Posh icons and glyphs to display correctly
 try {
@@ -39,6 +42,13 @@ if (Test-Path $ohMyPoshExe) {
     Write-Host "Oh My Posh not found: $ohMyPoshExe" -ForegroundColor Yellow
 }
 
+# Import Terminal-Icons for colorful file/folder icons
+try {
+    Import-Module Terminal-Icons -ErrorAction SilentlyContinue
+} catch {
+    # Silently continue if Terminal-Icons is not available
+}
+
 # Set PowerShell options for better experience
 Set-PSReadLineOption -EditMode Windows
 Set-PSReadLineOption -PredictionSource History
@@ -60,5 +70,5 @@ Set-PSReadLineKeyHandler -Key Tab -Function MenuComplete
 
 # Welcome message
 Write-Host "Bearsampp PowerShell" -ForegroundColor Cyan
-Write-Host "Enhanced with PSReadLine and Oh My Posh" -ForegroundColor Gray
+Write-Host "Enhanced with PSReadLine, Oh My Posh, and Terminal-Icons" -ForegroundColor Gray
 Write-Host ""

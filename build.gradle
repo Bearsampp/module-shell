@@ -147,6 +147,7 @@ def find7ZipExecutable() {
 
 /**
  * Download a file from URL with progress indication
+ * Handles redirects (e.g., PowerShell Gallery redirects to actual .nupkg)
  */
 def downloadFile(String url, File destFile) {
     println "  Downloading from: ${url}"
@@ -161,6 +162,7 @@ def downloadFile(String url, File destFile) {
 
     def connection = new URL(url).openConnection()
     connection.setRequestProperty('User-Agent', 'Bearsampp-Build')
+    connection.setInstanceFollowRedirects(true)
 
     def contentLength = connection.getContentLengthLong()
     def inputStream = connection.getInputStream()
@@ -730,6 +732,64 @@ tasks.register('release') {
                 }
                 println "Verified: libintl3.dll"
             }
+
+            // PowerShell Gallery Modules - Generic handler for all .nupkg modules
+            def psGalleryModules = [
+                'terminal_icons': 'Terminal-Icons',
+                'psreadline': 'PSReadLine'
+            ]
+
+            psGalleryModules.each { propKey, moduleName ->
+                if (depsProps.containsKey(propKey)) {
+                    println ""
+                    println "Download ${moduleName} (PowerShell Gallery)"
+                    def moduleUrl = depsProps.getProperty(propKey)
+                    def modulesPath = file("${bundleSrcFinal}/vendor/modules")
+
+                    println "Check ${moduleName}"
+                    modulesPath.mkdirs()
+
+                    // Download .nupkg file (PowerShell Gallery package)
+                    def downloadsDir = file(bundleTmpDownloadPath)
+                    downloadsDir.mkdirs()
+                    def nupkgFile = file("${downloadsDir}/${moduleName}.nupkg")
+
+                    downloadFile(moduleUrl, nupkgFile)
+
+                    // Extract .nupkg (it's just a zip file)
+                    def tempExtractDir = file("${buildTmpPath}/${moduleName.toLowerCase()}-temp")
+                    if (tempExtractDir.exists()) {
+                        delete tempExtractDir
+                    }
+                    tempExtractDir.mkdirs()
+
+                    println "  Extracting PowerShell module..."
+                    ant.unzip(src: nupkgFile, dest: tempExtractDir, overwrite: true)
+
+                    // Copy module files to vendor/modules/{ModuleName}
+                    def moduleDestPath = file("${modulesPath}/${moduleName}")
+                    if (moduleDestPath.exists()) {
+                        delete moduleDestPath
+                    }
+                    moduleDestPath.mkdirs()
+
+                    copy {
+                        from tempExtractDir
+                        into moduleDestPath
+                        exclude '_rels/**'
+                        exclude 'package/**'
+                        exclude '[Content_Types].xml'
+                        exclude '*.nuspec'
+                    }
+
+                    // Verify module manifest exists
+                    def manifestFile = file("${moduleDestPath}/${moduleName}.psd1")
+                    if (!manifestFile.exists()) {
+                        throw new GradleException("${moduleName}.psd1 not found after extraction")
+                    }
+                    println "Verified: ${moduleName}.psd1"
+                }
+            }
         }
 
         println ""
@@ -853,7 +913,9 @@ tasks.register('release') {
         def tempDirsToClean = [
             file("${buildTmpPath}/ansicon-temp"),
             file("${buildTmpPath}/gnuwin32-bin-temp"),
-            file("${buildTmpPath}/gnuwin32-dep-temp")
+            file("${buildTmpPath}/gnuwin32-dep-temp"),
+            file("${buildTmpPath}/terminal-icons-temp"),
+            file("${buildTmpPath}/psreadline-temp")
         ]
 
         tempDirsToClean.each { dir ->
