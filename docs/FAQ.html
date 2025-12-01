@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PowerShell Module - Frequently Asked Questions (FAQ)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+
+        h2 {
+            color: #2c3e50;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #ecf0f1;
+            font-size: 1.8em;
+        }
+
+        h3 {
+            color: #34495e;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        h4 {
+            color: #555;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        ul, ol {
+            margin-left: 30px;
+            margin-bottom: 15px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        code {
+            background-color: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #e74c3c;
+        }
+
+        pre {
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin-bottom: 20px;
+            font-family: 'Cascadia Code', 'Consolas', 'Monaco', monospace;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+
+        pre code {
+            background-color: transparent;
+            padding: 0;
+            color: inherit;
+            font-size: inherit;
+        }
+
+        a {
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        strong {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .toc {
+            background-color: #ecf0f1;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 30px;
+        }
+
+        .toc h2 {
+            margin-top: 0;
+            border-bottom: none;
+            font-size: 1.5em;
+        }
+
+        .toc ul {
+            list-style-type: none;
+            margin-left: 0;
+        }
+
+        .toc ul li {
+            margin-bottom: 5px;
+        }
+
+        .toc a {
+            color: #2c3e50;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid #ecf0f1;
+            margin: 40px 0;
+        }
+
+        .highlight {
+            background-color: #fff3cd;
+            padding: 15px;
+            border-left: 4px solid #ffc107;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+
+        .note {
+            background-color: #d1ecf1;
+            padding: 15px;
+            border-left: 4px solid #17a2b8;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+
+        .warning {
+            background-color: #f8d7da;
+            padding: 15px;
+            border-left: 4px solid #dc3545;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        table th,
+        table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        table th {
+            background-color: #3498db;
+            color: white;
+            font-weight: 600;
+        }
+
+        table tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: #3498db;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            display: none;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .back-to-top:hover {
+            background-color: #2980b9;
+            text-decoration: none;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            h2 {
+                font-size: 1.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>PowerShell Module - Frequently Asked Questions (FAQ)</h1>
+
+        <div class="toc">
+            <h2>Table of Contents</h2>
+            <ul>
+                <li><a href="#general-questions">General Questions</a></li>
+                <li><a href="#installation-setup">Installation &amp; Setup</a></li>
+                <li><a href="#building-compilation">Building &amp; Compilation</a></li>
+                <li><a href="#font-display-issues">Font &amp; Display Issues</a></li>
+                <li><a href="#configuration">Configuration</a></li>
+                <li><a href="#troubleshooting">Troubleshooting</a></li>
+                <li><a href="#advanced-usage">Advanced Usage</a></li>
+            </ul>
+        </div>
+
+        <hr>
+
+        <h2 id="general-questions">General Questions</h2>
+
+        <h3>What is the Bearsampp PowerShell module?</h3>
+        <p>This is a module of the Bearsampp project that provides PowerShell 7+ with enhanced console features including Oh My Posh for beautiful prompt themes, PSReadLine for advanced command-line editing, and Nerd Fonts for rich icon support.</p>
+
+        <h3>What are the main features?</h3>
+        <ul>
+            <li><strong>Oh My Posh</strong> - Beautiful and customizable prompt themes</li>
+            <li><strong>PSReadLine</strong> - Advanced command-line editing and history</li>
+            <li><strong>Nerd Fonts</strong> - Rich icon and glyph support</li>
+            <li><strong>Auto-completion</strong> - Intelligent command and path completion</li>
+            <li><strong>Command History</strong> - Persistent command history across sessions</li>
+            <li><strong>Syntax Highlighting</strong> - Color-coded command syntax</li>
+        </ul>
+
+        <h3>What versions of PowerShell are supported?</h3>
+        <p>The module supports PowerShell 7.0 and later versions. You can build specific versions using the Gradle build system.</p>
+
+        <h3>Is this compatible with Windows PowerShell 5.1?</h3>
+        <p>This module is designed for PowerShell 7+. While some features may work with Windows PowerShell 5.1, full compatibility is not guaranteed.</p>
+
+        <hr>
+
+        <h2 id="installation-setup">Installation &amp; Setup</h2>
+
+        <h3>What are the prerequisites for building this module?</h3>
+        <p>You need:</p>
+        <ul>
+            <li><strong>Java JDK</strong> 8 or later</li>
+            <li><strong>Gradle</strong> 8.0+</li>
+            <li><strong>7-Zip</strong> (required for .7z format)</li>
+            <li><strong>Git</strong></li>
+        </ul>
+
+        <h3>Do I need to install the Gradle Wrapper?</h3>
+        <p>No, this project deliberately does not ship the Gradle Wrapper. You must install Gradle 8+ locally on your system.</p>
+
+        <h3>Where can I download the prerequisites?</h3>
+        <ul>
+            <li>Java JDK: <a href="https://adoptium.net/" target="_blank">https://adoptium.net/</a></li>
+            <li>Gradle: <a href="https://gradle.org/" target="_blank">https://gradle.org/</a></li>
+            <li>7-Zip: <a href="https://www.7-zip.org/" target="_blank">https://www.7-zip.org/</a></li>
+            <li>Git: <a href="https://git-scm.com/install/windows" target="_blank">https://git-scm.com</a></li>
+        </ul>
+
+        <h3>How do I verify my build environment is ready?</h3>
+        <p>Run the verification command:</p>
+        <pre><code>gradle verify</code></pre>
+        <p>This will check for Java, build.properties, required directories, and 7-Zip.</p>
+
+        <hr>
+
+        <h2 id="building-compilation">Building &amp; Compilation</h2>
+
+        <h3>How do I build a specific version?</h3>
+        <p>Use the release task with the version parameter:</p>
+        <pre><code># Non-interactive mode
+gradle release -PbundleVersion=7.5.4
+
+# Interactive mode (prompts for version selection)
+gradle release</code></pre>
+
+        <h3>How do I build all available versions at once?</h3>
+        <p>Use the releaseAll task:</p>
+        <pre><code>gradle releaseAll</code></pre>
+
+        <h3>How can I see what versions are available to build?</h3>
+        <p>List available versions with:</p>
+        <pre><code>gradle listVersions</code></pre>
+
+        <h3>Where are the build outputs stored?</h3>
+        <p>By default, builds are stored in:</p>
+        <pre><code>C:/Bearsampp-build/tools/powershell/{release-date}/</code></pre>
+        <p>You can customize this location in <code>build.properties</code> using the <code>build.path</code> property.</p>
+
+        <h3>What files are generated during a build?</h3>
+        <p>For each version, you get:</p>
+        <ul>
+            <li>The main archive (<code>.7z</code> or <code>.zip</code>)</li>
+            <li>MD5 checksum (<code>.md5</code>)</li>
+            <li>SHA1 checksum (<code>.sha1</code>)</li>
+            <li>SHA256 checksum (<code>.sha256</code>)</li>
+            <li>SHA512 checksum (<code>.sha512</code>)</li>
+        </ul>
+
+        <h3>How do I change the archive format from 7z to zip?</h3>
+        <p>Edit <code>build.properties</code> and change:</p>
+        <pre><code>bundle.format = zip</code></pre>
+
+        <h3>What does the build process actually do?</h3>
+        <p>The build process:</p>
+        <ol>
+            <li>Downloads PowerShell binaries from the modules-untouched repository</li>
+            <li>Downloads dependencies (Oh My Posh, themes)</li>
+            <li>Configures the PowerShell profile</li>
+            <li>Packages everything into an archive</li>
+            <li>Generates checksums for verification</li>
+        </ol>
+
+        <hr>
+
+        <h2 id="font-display-issues">Font &amp; Display Issues</h2>
+
+        <h3>Why do I see boxes or question marks instead of icons?</h3>
+        <p>You need to install and configure a Nerd Font. This module requires <strong>CaskaydiaCove NF</strong> (Cascadia Code Nerd Font) to display icons correctly.</p>
+
+        <h3>How do I install the required font?</h3>
+        <p>The CaskaydiaCove NF font should be installed system-wide via Bearsampp prerequisites. If not installed, download it from the Nerd Fonts website and install it in Windows.</p>
+
+        <h3>How do I configure the font in Windows Terminal?</h3>
+        <p>Add this to your Windows Terminal <code>settings.json</code>:</p>
+        <pre><code>{
+    "profiles": {
+        "defaults": {
+            "font": {
+                "face": "CaskaydiaCove NF",
+                "size": 10
+            }
+        }
+    }
+}</code></pre>
+
+        <h3>How do I configure the font in the classic Windows Console?</h3>
+        <ol>
+            <li>Right-click the title bar → Properties</li>
+            <li>Go to the Font tab</li>
+            <li>Select "CaskaydiaCove NF" from the font list</li>
+            <li>Click OK</li>
+        </ol>
+
+        <h3>The font is installed but icons still don't show. What's wrong?</h3>
+        <p>Make sure:</p>
+        <ol>
+            <li>The font is installed system-wide (not just for your user)</li>
+            <li>You've restarted your terminal after installing the font</li>
+            <li>The font name is exactly "CaskaydiaCove NF" in your configuration</li>
+            <li>Your terminal supports Unicode and UTF-8 encoding</li>
+        </ol>
+
+        <hr>
+
+        <h2 id="configuration">Configuration</h2>
+
+        <h3>Where is the PowerShell profile located?</h3>
+        <p>The profile is located at:</p>
+        <pre><code>bin/powershell{version}/Microsoft.PowerShell_profile.ps1</code></pre>
+
+        <h3>How do I change the Oh My Posh theme?</h3>
+        <p>Edit the profile file and change the theme path:</p>
+        <pre><code>$ohMyPoshTheme = Join-Path $env:POSH_ROOT "themes\YOUR_THEME.omp.json"</code></pre>
+        <p>Available themes are in the <code>vendor/oh-my-posh/themes/</code> directory.</p>
+
+        <h3>What themes are available?</h3>
+        <p>The module includes all Oh My Posh themes. Popular ones include:</p>
+        <ul>
+            <li>paradox (default)</li>
+            <li>agnoster</li>
+            <li>powerlevel10k_rainbow</li>
+            <li>atomic</li>
+            <li>jandedobbeleer</li>
+        </ul>
+        <p>Browse the themes directory or visit <a href="https://ohmyposh.dev/docs/themes" target="_blank">https://ohmyposh.dev/docs/themes</a></p>
+
+        <h3>How do I customize PSReadLine settings?</h3>
+        <p>Edit the <code>Set-PSReadLineOption</code> calls in the profile to customize:</p>
+        <ul>
+            <li>Colors and syntax highlighting</li>
+            <li>Key bindings</li>
+            <li>History behavior</li>
+            <li>Prediction settings</li>
+            <li>Edit mode (Windows, Emacs, Vi)</li>
+        </ul>
+
+        <h3>What environment variables does this module set?</h3>
+        <ul>
+            <li><code>POSH_ROOT</code> - Path to Oh My Posh installation</li>
+            <li><code>POSH_THEMES_PATH</code> - Path to Oh My Posh themes directory</li>
+        </ul>
+
+        <h3>How do I configure dependencies for a specific version?</h3>
+        <p>Edit the <code>deps.properties</code> file in the version directory:</p>
+        <pre><code>bin/powershell{version}/deps.properties</code></pre>
+        <p>This file contains URLs for Oh My Posh and theme downloads.</p>
+
+        <h3>Can I use a custom build output directory?</h3>
+        <p>Yes, uncomment and set the <code>build.path</code> property in <code>build.properties</code>:</p>
+        <pre><code>build.path = D:/MyCustomPath</code></pre>
+
+        <hr>
+
+        <h2 id="troubleshooting">Troubleshooting</h2>
+
+        <h3>The build fails with "7-Zip not found"</h3>
+        <p>Install 7-Zip from <a href="https://www.7-zip.org/" target="_blank">https://www.7-zip.org/</a> and ensure it's in your system PATH, or install it to the default location (<code>C:\Program Files\7-Zip\</code>).</p>
+
+        <h3>I get "Java not found" errors</h3>
+        <p>Ensure Java JDK 8+ is installed and the <code>JAVA_HOME</code> environment variable is set correctly. Verify with:</p>
+        <pre><code>java -version</code></pre>
+
+        <h3>Downloads fail during the build</h3>
+        <p>Check your internet connection and verify that the URLs in <code>releases.properties</code> and <code>deps.properties</code> are accessible. The build system downloads from the modules-untouched repository.</p>
+
+        <h3>The profile doesn't load when I start PowerShell</h3>
+        <p>Ensure:</p>
+        <ol>
+            <li>PowerShell execution policy allows scripts: <code>Set-ExecutionPolicy RemoteSigned -Scope CurrentUser</code></li>
+            <li>The profile is in the correct location</li>
+            <li>There are no syntax errors in the profile (check with <code>Test-Path $PROFILE</code>)</li>
+        </ol>
+
+        <h3>Oh My Posh doesn't initialize</h3>
+        <p>Check that:</p>
+        <ol>
+            <li>The <code>posh-windows-amd64.exe</code> file exists in the vendor directory</li>
+            <li>The <code>POSH_ROOT</code> environment variable is set correctly</li>
+            <li>The theme file exists at the specified path</li>
+        </ol>
+
+        <h3>Command history isn't working</h3>
+        <p>PSReadLine manages command history. Check:</p>
+        <ol>
+            <li>The history file location: <code>(Get-PSReadLineOption).HistorySavePath</code></li>
+            <li>Ensure the directory is writable</li>
+            <li>Verify PSReadLine is loaded: <code>Get-Module PSReadLine</code></li>
+        </ol>
+
+        <h3>How do I see all available Gradle tasks?</h3>
+        <p>Run:</p>
+        <pre><code>gradle tasks</code></pre>
+
+        <h3>Where can I find more detailed troubleshooting?</h3>
+        <p>Check the comprehensive troubleshooting guide:</p>
+        <pre><code>.gradle-docs/TROUBLESHOOTING.md</code></pre>
+
+        <hr>
+
+        <h2 id="advanced-usage">Advanced Usage</h2>
+
+        <h3>Can I build multiple versions with different configurations?</h3>
+        <p>Yes, each version in the <code>bin/</code> directory has its own <code>deps.properties</code> and <code>bearsampp.conf</code> files that can be configured independently.</p>
+
+        <h3>How do I add a new PowerShell version?</h3>
+        <ol>
+            <li>Create a new directory: <code>bin/powershell{version}/</code></li>
+            <li>Add <code>deps.properties</code> with dependency URLs</li>
+            <li>Add <code>bearsampp.conf</code> with Bearsampp configuration</li>
+            <li>Add the version mapping to <code>releases.properties</code></li>
+        </ol>
+
+        <h3>Can I use this module outside of Bearsampp?</h3>
+        <p>While designed for Bearsampp, the built archives contain a fully functional PowerShell setup that can be extracted and used independently.</p>
+
+        <h3>How do I check dependencies configuration?</h3>
+        <p>Run:</p>
+        <pre><code>gradle checkDeps</code></pre>
+        <p>This validates all <code>deps.properties</code> files.</p>
+
+        <h3>Can I see what releases are available in modules-untouched?</h3>
+        <p>Yes, run:</p>
+        <pre><code>gradle listReleases</code></pre>
+
+        <h3>How do I get build information?</h3>
+        <p>Run:</p>
+        <pre><code>gradle info</code></pre>
+        <p>This displays configuration details, available versions, and build settings.</p>
+
+        <h3>Are downloads cached?</h3>
+        <p>Yes, downloaded files are cached in the Gradle cache directory to speed up subsequent builds. Clean the cache with:</p>
+        <pre><code>gradle clean</code></pre>
+
+        <h3>Can I customize the bundle release identifier?</h3>
+        <p>Yes, edit the <code>bundle.release</code> property in <code>build.properties</code>:</p>
+        <pre><code>bundle.release = 2025.11.13</code></pre>
+
+        <h3>How do I contribute or report issues?</h3>
+        <p>Issues must be reported on the main Bearsampp repository:<br>
+        <a href="https://github.com/bearsampp/bearsampp/issues" target="_blank">https://github.com/bearsampp/bearsampp/issues</a></p>
+
+        <hr>
+
+        <h2>Additional Resources</h2>
+        <ul>
+            <li><strong>Official Website</strong>: <a href="https://bearsampp.com/module/powershell" target="_blank">https://bearsampp.com/module/powershell</a></li>
+            <li><strong>GitHub Repository</strong>: <a href="https://github.com/bearsampp/module-powershell" target="_blank">https://github.com/bearsampp/module-powershell</a></li>
+            <li><strong>Build Documentation</strong>: <code>.gradle-docs/README.md</code></li>
+            <li><strong>Task Reference</strong>: <code>.gradle-docs/TASKS.md</code></li>
+            <li><strong>Configuration Guide</strong>: <code>.gradle-docs/CONFIGURATION.md</code></li>
+            <li><strong>Troubleshooting Guide</strong>: <code>.gradle-docs/TROUBLESHOOTING.md</code></li>
+            <li><strong>Oh My Posh Themes</strong>: <a href="https://ohmyposh.dev/docs/themes" target="_blank">https://ohmyposh.dev/docs/themes</a></li>
+            <li><strong>PSReadLine Documentation</strong>: <a href="https://docs.microsoft.com/en-us/powershell/module/psreadline/" target="_blank">Microsoft Docs</a></li>
+        </ul>
+
+        <hr>
+
+        <p style="text-align: center; color: #7f8c8d; margin-top: 40px;">
+            <em>Last Updated: 2025</em>
+        </p>
+    </div>
+
+    <a href="#" class="back-to-top" id="backToTop">↑ Top</a>
+
+    <script>
+        // Back to top button functionality
+        window.addEventListener('scroll', function() {
+            var backToTop = document.getElementById('backToTop');
+            if (window.pageYOffset > 300) {
+                backToTop.style.display = 'block';
+            } else {
+                backToTop.style.display = 'none';
+            }
+        });
+
+        document.getElementById('backToTop').addEventListener('click', function(e) {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
