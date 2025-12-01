@@ -14,8 +14,13 @@ $env:PSModulePath = (Join-Path $SHELL_ROOT "vendor\modules") + ";" + $env:PSModu
 # Configure console to use Nerd Font (CaskaydiaCove NF)
 # This is required for Oh My Posh icons and glyphs to display correctly
 try {
-    # Set console font to CaskaydiaCove NF
-    $Host.UI.RawUI.WindowTitle = "Bearsampp PowerShell Console"
+    # Only set default title if one hasn't been set already
+    # This allows the launcher to set custom titles per console type
+    if ($Host.UI.RawUI.WindowTitle -eq "Administrator: C:\WINDOWS\system32\cmd.exe" -or 
+        $Host.UI.RawUI.WindowTitle -eq "C:\WINDOWS\system32\cmd.exe" -or
+        $Host.UI.RawUI.WindowTitle -match "pwsh\.exe") {
+        $Host.UI.RawUI.WindowTitle = "Bearsampp PowerShell Console"
+    }
     
     # Note: Font configuration is typically set in Windows Terminal settings.json
     # or via registry for Windows Console Host. The font should be installed system-wide.
