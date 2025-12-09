@@ -8,8 +8,9 @@ on:
             - 'main'
     release:
         types:
-            - published
+            - created
             - edited
+            - prereleased
     workflow_dispatch:
 
 jobs:
@@ -17,7 +18,7 @@ jobs:
         if: |
             (github.event_name == 'workflow_dispatch') ||
             (github.event_name == 'pull_request' && github.event.pull_request.merged == true) ||
-            (github.event_name == 'release' && (github.event.action == 'published' || github.event.action == 'edited'))
+            (github.event_name == 'release' && (github.event.action == 'created' || github.event.action == 'edited' || github.event.action == 'prereleased'))
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
