@@ -815,6 +815,7 @@ tasks.register('release') {
         }
 
         // Copy to bundles_build directory (non-zip dev artifact)
+        // Structure: bearsampp-build/tmp/bundles_build/tools/powershell/powershell7.5.4/
         println ""
         println "Copying to bundles_build directory..."
         def powershellBuildPath = file("${bundleTmpBuildPath}/${bundleName}${bundleVersion}")
@@ -822,10 +823,20 @@ tasks.register('release') {
             delete powershellBuildPath
         }
         powershellBuildPath.mkdirs()
+        
+        // First copy PowerShell binaries
         copy {
-            from bundleTmpPrepPath
+            from bundleSrcFinal
             into powershellBuildPath
         }
+        
+        // Then overlay bundle-specific files (config, scripts, etc.)
+        copy {
+            from bundlePath
+            into powershellBuildPath
+            exclude 'deps.properties'
+        }
+        
         println "Non-zip version available at: ${powershellBuildPath}"
 
         // Determine build output path following Bearsampp pattern
